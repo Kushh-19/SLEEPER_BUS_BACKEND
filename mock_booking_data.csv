@@ -1,0 +1,4 @@
+booking_id,waitlist_position,days_before_travel,route_distance,status
+B001,2,15,Short,CONFIRMED
+B002,20,1,Long,CANCELLED
+B003,5,10,Long,CONFIRMED
