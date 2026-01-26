@@ -10,8 +10,8 @@ The system includes an **interactive seat booking flow**, an **integrated meal b
 
 ## UI/UX Prototype
 
-**Figma / Adobe XD Prototype Link:**  
-[PASTE YOUR PUBLIC PROTOTYPE LINK HERE]
+**Figma Prototype Link:**  
+[https://www.figma.com/proto/FgrwKbxB00Raaq4S9a7Bpf/Sleeper-Bus-Booking-%E2%80%93-Prototype?node-id=3-2572&t=oFSW2MG7FBYfomUL-1&starting-point-node-id=3%3A2572]
 
 ---
 

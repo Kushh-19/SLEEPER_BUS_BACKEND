@@ -1,73 +1,155 @@
-# Prediction Approach: Waitlist Confirmation Probability
+# 📊 Booking Confirmation Prediction Approach
 
-## 1. Project Overview
-This module implements a **Confirmation Booking Prediction** feature for the Sleeper Bus Booking System. The goal is to provide waitlisted users with a real-time probability estimate (percentage) that their ticket will be confirmed before the journey date.
+## Overview
 
-**Prediction Target:** $P(Confirmation | WaitlistPosition, Time, Route)$
+This document explains the **mock AI/ML logic** used to predict the **confirmation probability (%)** of a waitlisted booking in the *Sleeper Bus Booking System (Ahmedabad → Mumbai)*.
 
----
-
-## 2. Prediction Methodology
-Since real-time historical booking data is unavailable for this assignment, we have implemented a **Simulated Model** (Mock Logic) that mimics the behavior of a supervised machine learning classifier.
-
-### Model Choice: Logistic Regression (Simulated)
-We simulated the output of a **Logistic Regression** model.
-* **Reason for Choice:** Logistic Regression is the industry standard for binary classification problems (Confirmed vs. Not Confirmed) where the output needs to be a specific probability score between 0 and 1 (0% to 100%).
-* **Alternative Considered:** Gradient Boosting (XGBoost) – rejected for this prototype due to high computational overhead for a simple mock API.
+The objective is to demonstrate **analytical thinking, feature selection, and model reasoning** using a **simulated historical dataset**, as required by the assignment.
 
 ---
 
-## 3. Feature Engineering & Logic
-The prediction engine uses a **Heuristic Weighting System** derived from domain knowledge of travel patterns. The logic assumes the presence of a trained model with the following feature weights:
+## 🎯 Prediction Goal
 
-### A. Waitlist Position (Queue Depth)
-* **Correlation:** Negative Strong
-* **Logic:** The deeper the queue, the lower the chance of confirmation.
-* **Weight:** `-5%` probability per position.
-* **Reasoning:** A user at WL #1 only needs one cancellation to clear. A user at WL #20 needs twenty cancellations, which is statistically unlikely.
+To estimate the **percentage probability** that a waitlisted ticket will be confirmed before the travel date.
 
-### B. Days to Departure (Time Decay)
-* **Correlation:** Positive (Logarithmic)
-* **Logic:** More time remaining implies a higher "cancellation window" for other passengers.
-* **Weight:** * `> 10 Days`: +10% Bonus (High opportunity for clearance).
-    * `< 2 Days`: -40% Penalty (Chart preparation imminent).
-
-### C. Route Distance
-* **Correlation:** Negative
-* **Logic:** Long-distance travelers (Ahmedabad → Mumbai) show higher commitment and lower cancellation rates compared to short-hop travelers.
-* **Weight:** -10% for full-length journeys.
+This prediction helps users understand the likelihood of seat clearance on busy routes.
 
 ---
 
-## 4. Mock Training Dataset
-The model simulation is based on the schema defined in `mock_booking_data.csv` included in this repository.
+## 📁 Mock Historical Dataset
 
-**Dataset Schema:**
-| Feature | Type | Description |
-| :--- | :--- | :--- |
-| `booking_id` | String | Unique Identifier |
-| `waitlist_position` | Integer | The user's position in the queue at booking time |
-| `days_before_travel` | Integer | Number of days between booking and travel |
-| `route_category` | Categorical | 'Long' (Ahd-Mum) or 'Short' (Ahd-Vad) |
-| `outcome` | Binary | 1 (Confirmed) or 0 (Cancelled/Waitlist) |
+A simulated dataset is included in the repository:
 
-**Training Assumption:** The weights used in `prediction_engine.py` represent the coefficients ($\beta$) that would have been learned by training on this dataset.
+
+This file represents **historical booking and waitlist behavior** and is used for:
+- Feature selection
+- Weight reasoning
+- Model explanation
+
+> Note: The dataset is **not used at runtime** and exists purely for analytical and documentation purposes.
 
 ---
 
-## 5. Final Output & usage
-The API endpoint `/predict_confirmation` aggregates these weights to return a final percentage.
+## 📊 Dataset Structure
 
-**Example Output:**
+The mock CSV contains records with the following fields (example):
+
+| Column Name | Description |
+|------------|------------|
+| booking_id | Unique booking identifier |
+| source | Source station |
+| destination | Destination station |
+| travel_date | Date of journey |
+| days_before_travel | Days remaining before departure |
+| waitlist_position | Position in waitlist queue |
+| booking_status | Confirmed / Waitlisted / Cancelled |
+| route_type | Long route / Short route |
+
+This structure mirrors realistic booking system data.
+
+---
+
+## 📥 Input Features Used for Prediction
+
+Based on analysis of the mock dataset, the following features were selected:
+
+### 1. Waitlist Position
+- Strongest predictor of confirmation probability
+- Lower position → higher chance of clearance
+
+### 2. Days Before Travel
+- More days remaining → higher likelihood of cancellations
+- Last-minute requests have significantly lower probability
+
+### 3. Route Demand
+- Long, high-demand routes (Ahmedabad → Mumbai) have lower clearance rates
+- Shorter segments show better availability patterns
+
+---
+
+## 🧠 Model Choice (Mock)
+
+### Simulated Logistic Regression (Rule-Based)
+
+A **rule-based heuristic model inspired by Logistic Regression** is used instead of training a real ML model.
+
+### Rationale
+- Limited dataset
+- Clear explainability
+- Explicitly allowed by assignment
+- Demonstrates ML reasoning without unnecessary complexity
+
+---
+
+## ⚙️ Prediction Logic Breakdown
+
+1. **Base Probability**
+   - Initial probability score set to 100%
+
+2. **Waitlist Penalty**
+   - Probability decreases linearly with waitlist position
+
+3. **Time-Based Adjustment**
+   - >10 days before travel → bonus
+   - <5 days → penalty
+   - <2 days → heavy penalty
+
+4. **Route Demand Adjustment**
+   - Busy routes apply an additional reduction
+
+5. **Stochastic Noise**
+   - Small random variance (±5%)
+   - Simulates real-world uncertainty
+
+6. **Clamping**
+   - Final output restricted between **0% and 99%**
+
+---
+
+## 📈 Sample Prediction Scenarios
+
+### Scenario 1: High Probability
+- Waitlist Position: 2
+- Days Before Travel: 12
+- Route: Ahmedabad → Mumbai
+
+Predicted Probability: **~80–90%**
+
+---
+
+### Scenario 2: Medium Probability
+- Waitlist Position: 6
+- Days Before Travel: 5
+- Route: Ahmedabad → Surat
+
+Predicted Probability: **~40–60%**
+
+---
+
+### Scenario 3: Low Probability
+- Waitlist Position: 12
+- Days Before Travel: 1
+- Route: Ahmedabad → Mumbai
+
+Predicted Probability: **<10%**
+
+---
+
+## 📤 Output Format
+
+The prediction API returns:
+
+- `probability` → Confirmation chance in percentage
+- `confidence_score` → High / Medium
+- `drivers` → Key contributing factors
+
+Example:
 ```json
 {
-  "confirmation_probability": "75%",
-  "details": {
-    "probability": 75,
-    "confidence_score": "High",
-    "drivers": {
-      "queue_impact": -10,
-      "time_impact": "Positive"
-    }
+  "probability": 72,
+  "confidence_score": "High",
+  "drivers": {
+    "queue_impact": -15,
+    "time_impact": "Positive"
   }
 }
