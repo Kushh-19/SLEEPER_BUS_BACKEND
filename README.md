@@ -1,84 +1,210 @@
 # Sleeper Bus Booking System (Ahmedabad → Mumbai)
 
-## 📌 Project Overview
-[cite_start]This project is a web-based booking system designed for a single sleeper bus service operating between Ahmedabad and Mumbai[cite: 7, 10]. [cite_start]The system features an interactive seat selection flow, a unique meal integration service, and an AI-powered Waitlist Prediction engine to estimate confirmation chances for waitlisted tickets[cite: 8, 36].
+## Project Overview
 
-**Role:** AI/ML Software Engineer  
-**Timeline:** Jan 2026
+This project is a web-based sleeper bus booking system designed for a **single sleeper bus service** operating between **Ahmedabad and Mumbai**, with intermediate stations such as **Vadodara** and **Surat**.
+
+The system includes an **interactive seat booking flow**, an **integrated meal booking service**, and an **AI-powered waitlist confirmation prediction engine** that estimates the likelihood of booking confirmation in percentage terms.
 
 ---
 
-## 🎨 UI/UX Prototype
-**[PASTE YOUR FIGMA / ADOBE XD LINK HERE]**
-> [cite_start]*Note: This prototype demonstrates the visual flow from search to booking confirmation.* [cite: 24]
+## UI/UX Prototype
+
+**Figma / Adobe XD Prototype Link:**  
+[PASTE YOUR PUBLIC PROTOTYPE LINK HERE]
 
 ---
 
 ## 🚀 Core Features (Web Flow)
-[cite_start]*Per assignment requirements, here are the defined core features:* [cite: 15]
 
-### 1. Smart Route & Seat Visualization
-* [cite_start]Users can select source and destination (including intermediate stops like Vadodara/Surat)[cite: 11].
-* The system dynamically filters seat availability based on the specific route segment to maximize occupancy (e.g., a seat booked from Ahmedabad to Vadodara is shown as "Available" for a Vadodara to Mumbai search).
+### 1. Smart Route & Seat Availability Logic
+- Users can select source and destination stations, including intermediate stops.
+- Seat availability is calculated per route segment to prevent overlapping seat conflicts.
+- Example: A seat booked from Ahmedabad → Vadodara remains available for Vadodara → Mumbai.
 
-### 2. Interactive Deck Layout (Sleeper/Seater)
-* Visual representation of the bus layout, distinguishing between **Lower Deck** (Seater/Sleeper mix) and **Upper Deck** (Sleeper only).
-* Clear color-coding for status: *Available (Green), Booked (Grey), Selected (Blue).*
+---
 
-### 3. Integrated Meal Booking Service (Unique Feature)
-* [cite_start]During the checkout process, users can add meal packs (Veg/Non-Veg) directly to their ticket[cite: 8].
-* The system calculates the total fare (Seat Price + Meal Cost) in real-time before payment.
+### 2. Interactive Sleeper Seat Layout
+- Logical separation between Lower Deck and Upper Deck seats.
+- Clear seat status handling (Available / Booked).
+- Backend structure supports UI visualization.
 
-### 4. AI-Powered Confirmation Prediction
-* [cite_start]For waitlisted seats, the system displays a **"Confirmation Probability %"**[cite: 36].
-* This is calculated using a custom prediction engine that analyzes Queue Position, Days to Departure, and Historical Route Demand.
+---
 
-### 5. Real-Time Conflict Detection
-* Prevents "Double Booking" errors. If two users try to book the same seat simultaneously, the system locks the seat for the first request and alerts the second user immediately.
+### 3. Integrated Meal Booking (Unique Requirement)
+- Users can add meals during the seat booking process.
+- Meal cost is calculated dynamically and added to the total fare.
+- Total Fare = Seat Price + Meal Price.
 
-### 6. Seamless Cancellation & Refund Calculation
-* [cite_start]Users can cancel their booking via a simple PNR lookup[cite: 33].
-* The system automatically calculates the refundable amount based on the cancellation policy logic implemented in the backend.
+---
+
+### 4. AI-Powered Booking Confirmation Prediction
+- For waitlisted scenarios, users can check a **Confirmation Probability (%)**.
+- Prediction considers:
+  - Waitlist position
+  - Days before travel
+  - Route demand (busy vs shorter routes)
+
+---
+
+### 5. Real-Time Booking Conflict Prevention
+- Prevents double booking of seats on overlapping routes.
+- Seat availability is validated at booking time.
+
+---
+
+### 6. Seamless Booking Cancellation
+- Users can cancel bookings using a booking ID.
+- Cancelled bookings immediately release seats back into availability.
+
+---
+
+## 🔄 User Flow Summary
+
+1. User selects source, destination, and travel date.
+2. System displays available seats.
+3. User selects seat(s) and optional meal(s).
+4. Booking is confirmed with total fare.
+5. User may cancel booking or check waitlist confirmation probability.
 
 ---
 
 ## 🧪 Critical Test Cases
-[cite_start]*Comprehensive QA plan covering Functional, Edge, and UI scenarios.* [cite: 17]
 
-### [cite_start]A. Functional Test Cases [cite: 18]
-1.  **Verify Route Logic:** Searching for "Vadodara to Ahmedabad" (Reverse/Invalid direction) should show an error or 0 buses.
-2.  **Verify Price Calculation:** Select 1 Seat (700) + 2 Meals (200). Total should exactly equal 900.
-3.  **Verify Booking Persistence:** After a successful booking, the seat must appear "Booked" for subsequent users searching the same segment.
-4.  **Verify Cancellation:** Canceling a booking should immediately free up the seat for new users.
+### A. Functional Test Cases
 
-### [cite_start]B. Edge Cases [cite: 19]
-1.  **Segment Overlap:** If Seat L1 is booked *Ahmedabad -> Vadodara*, a new user **MUST** be able to book Seat L1 for *Vadodara -> Mumbai*.
-2.  **The "Last Minute" Prediction:** A user checking prediction for a waitlist seat < 2 hours before departure should receive a very low (<5%) probability score.
-3.  **Concurrency:** Two API requests hitting `/book` for the same seat at the exact same millisecond. (Handled via backend status checks).
-4.  **Negative Meals:** Attempting to order "-1" meals in the API payload should return a Validation Error (422 Unprocessable Entity).
+1. **Route Validation**
+   - Searching for an invalid route (e.g., Mumbai → Ahmedabad) returns an error.
 
-### [cite_start]C. UI/UX Validation Cases [cite: 20]
-1.  **Mobile Responsiveness:** The bus seat layout must scroll horizontally or stack correctly on mobile screens.
-2.  **Loading States:** When the AI Prediction is calculating, a skeleton loader or spinner must be shown to prevent user drop-off.
-3.  **Error Feedback:** If a payment fails or a seat is taken, the error message must be human-readable (e.g., *"Sorry, this seat was just booked!"*) rather than a raw 500 server error.
+2. **Price Calculation**
+   - 1 Seat (₹700) + 2 Meals (₹200) → Total should be ₹900.
+
+3. **Seat Booking Persistence**
+   - After booking, the seat appears as booked for subsequent users.
+
+4. **Cancellation Flow**
+   - Cancelling a booking updates status to CANCELLED and releases seats.
 
 ---
 
-## 🛠️ Tech Stack & Setup
-* [cite_start]**Backend:** Python (FastAPI) [cite: 27]
-* **Data Validation:** Pydantic
-* [cite_start]**Prediction Logic:** Custom Heuristic Engine (Simulated Logistic Regression) [cite: 37]
+### B. Edge Cases
 
-### How to Run
-1.  **Install Dependencies:**
-    ```bash
-    pip install fastapi uvicorn
-    ```
-2.  **Start Server:**
-    ```bash
-    uvicorn main:app --reload
-    ```
-3.  **Access API Docs:**
-    Open `http://127.0.0.1:8000/docs` to test endpoints.
+1. **Segment Overlap Handling**
+   - Seat booked Ahmedabad → Vadodara must remain available for Vadodara → Mumbai.
+
+2. **Last-Minute Prediction**
+   - Prediction made < 2 days before travel returns very low probability.
+
+3. **Concurrent Booking Requests**
+   - Two simultaneous booking requests for the same seat result in only one success.
+
+4. **Invalid Meal Count**
+   - Negative meal values return validation errors.
 
 ---
+
+### C. UI/UX Validation Cases
+
+1. Clear distinction between available and booked seats.
+2. User-friendly error messages instead of raw server errors.
+3. Confirmation probability displayed clearly as a percentage.
+
+---
+
+## 🔌 Backend API Overview
+
+### Tech Stack
+- **Backend:** Python (FastAPI)
+- **Data Validation:** Pydantic
+- **Prediction Logic:** Custom heuristic-based engine (mock AI model)
+
+---
+
+### API Endpoints
+
+#### Health Check
+GET /
+
+#### List Seats
+GET /seats
+
+#### Book Seats (with Meals)
+POST /book
+
+#### Cancel Booking
+POST /cancel_booking
+
+#### Predict Booking Confirmation
+POST /predict_confirmation
+
+---
+
+## 🤖 Booking Confirmation Prediction (AI/ML – Mock Logic)
+
+### Prediction Goal
+Estimate the probability (%) that a waitlisted booking will be confirmed.
+
+---
+
+### Prediction Approach
+- Rule-based heuristic inspired by Logistic Regression.
+- Combines queue position, time to departure, and route demand.
+- Adds controlled randomness to simulate real-world uncertainty.
+
+---
+
+### Mock Dataset
+- Simulated historical dataset (~5000 records).
+- Features:
+  - Waitlist position
+  - Days before travel
+  - Route type
+
+---
+
+### Output
+- Confirmation probability (0–99%)
+- Confidence level
+- Key influencing drivers
+
+Detailed explanation is available in **PREDICTION_APPROACH.md**.
+
+---
+
+## 📁 Repository Structure
+
+.
+├── main.py
+├── prediction_engine.py
+├── README.md
+├── PREDICTION_APPROACH.md
+
+---
+
+## ⚙️ System Assumptions
+
+- Only one bus exists in the system.
+- No payment gateway integration.
+- No user authentication.
+- Static station list.
+- Prediction model is mocked and not trained.
+
+---
+
+## ▶️ How to Run the Project
+
+1. Install dependencies:
+   pip install fastapi uvicorn
+
+2. Start the server:
+   uvicorn main:app --reload
+
+3. Access API docs:
+   http://127.0.0.1:8000/docs
+
+---
+
+## 👤 Author
+
+AI/ML Software Engineer Candidate  
+Sleeper Bus Ticket Booking System Assignment

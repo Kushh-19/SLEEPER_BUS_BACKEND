@@ -44,6 +44,9 @@ class PredictionRequest(BaseModel):
     days_before_travel: int = Field(..., description="Days remaining until travel date")
     waitlist_position: int = Field(..., description="Current Waitlist Position (e.g. 5)")
 
+class CancelBookingRequest(BaseModel):
+    booking_id: str
+
 # --- HELPERS ---
 def is_seat_available(seat_id: str, start_node: int, end_node: int, travel_date: date) -> bool:
     for b in bookings:
@@ -119,3 +122,30 @@ def predict_confirmation(request: PredictionRequest):
         "confirmation_probability": f"{result['probability']}%",
         "details": result
     }
+
+@app.post("/cancel_booking")
+def cancel_booking(request: CancelBookingRequest):
+    """
+    Cancels an existing booking and releases the seats.
+    """
+    for booking in bookings:
+        if booking["booking_id"] == request.booking_id:
+            if booking["status"] == "CANCELLED":
+                raise HTTPException(
+                    status_code=400,
+                    detail="Booking is already cancelled"
+                )
+            
+            booking["status"] = "CANCELLED"
+            booking["cancelled_at"] = datetime.utcnow()
+            
+            return {
+                "message": "Booking cancelled successfully",
+                "booking_id": booking["booking_id"],
+                "status": booking["status"]
+            }
+    
+    raise HTTPException(
+        status_code=404,
+        detail="Booking not found"
+    )

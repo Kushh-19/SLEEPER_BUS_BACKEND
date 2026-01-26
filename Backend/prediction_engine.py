@@ -69,7 +69,7 @@ class ConfirmationPredictor:
         
         return {
             "probability": int(final_probability),
-            "confidence_score": "High" if final_score > 70 or final_score < 30 else "Medium",
+            "confidence_score": "High" if final_probability > 70 or final_probability < 30 else "Medium",
             "drivers": {
                 "queue_impact": -queue_penalty,
                 "time_impact": "Negative" if days_before_travel < 5 else "Positive"
