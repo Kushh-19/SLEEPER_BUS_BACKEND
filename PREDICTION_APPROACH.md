@@ -1,4 +1,4 @@
-# 📊 Booking Confirmation Prediction Approach
+# Booking Confirmation Prediction Approach
 
 ## Overview
 
@@ -8,7 +8,7 @@ The objective is to demonstrate **analytical thinking, feature selection, and mo
 
 ---
 
-## 🎯 Prediction Goal
+## Prediction Goal
 
 To estimate the **percentage probability** that a waitlisted ticket will be confirmed before the travel date.
 
@@ -16,7 +16,7 @@ This prediction helps users understand the likelihood of seat clearance on busy 
 
 ---
 
-## 📁 Mock Historical Dataset
+## Mock Historical Dataset
 
 A simulated dataset is included in the repository:
 
@@ -30,7 +30,7 @@ This file represents **historical booking and waitlist behavior** and is used fo
 
 ---
 
-## 📊 Dataset Structure
+## Dataset Structure
 
 The mock CSV contains records with the following fields (example):
 
@@ -49,7 +49,7 @@ This structure mirrors realistic booking system data.
 
 ---
 
-## 📥 Input Features Used for Prediction
+## Input Features Used for Prediction
 
 Based on analysis of the mock dataset, the following features were selected:
 
@@ -67,7 +67,7 @@ Based on analysis of the mock dataset, the following features were selected:
 
 ---
 
-## 🧠 Model Choice (Mock)
+## Model Choice (Mock)
 
 ### Simulated Logistic Regression (Rule-Based)
 
@@ -81,7 +81,7 @@ A **rule-based heuristic model inspired by Logistic Regression** is used instead
 
 ---
 
-## ⚙️ Prediction Logic Breakdown
+## Prediction Logic Breakdown
 
 1. **Base Probability**
    - Initial probability score set to 100%
@@ -106,7 +106,7 @@ A **rule-based heuristic model inspired by Logistic Regression** is used instead
 
 ---
 
-## 📈 Sample Prediction Scenarios
+## Sample Prediction Scenarios
 
 ### Scenario 1: High Probability
 - Waitlist Position: 2
@@ -135,7 +135,7 @@ Predicted Probability: **<10%**
 
 ---
 
-## 📤 Output Format
+## Output Format
 
 The prediction API returns:
 

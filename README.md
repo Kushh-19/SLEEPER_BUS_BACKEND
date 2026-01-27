@@ -15,7 +15,7 @@ The system includes an **interactive seat booking flow**, an **integrated meal b
 
 ---
 
-## 🚀 Core Features (Web Flow)
+## Core Features (Web Flow)
 
 ### 1. Smart Route & Seat Availability Logic
 - Users can select source and destination stations, including intermediate stops.
@@ -59,7 +59,7 @@ The system includes an **interactive seat booking flow**, an **integrated meal b
 
 ---
 
-## 🔄 User Flow Summary
+## User Flow Summary
 
 1. User selects source, destination, and travel date.
 2. System displays available seats.
@@ -69,7 +69,7 @@ The system includes an **interactive seat booking flow**, an **integrated meal b
 
 ---
 
-## 🧪 Critical Test Cases
+## Critical Test Cases
 
 ### A. Functional Test Cases
 
@@ -111,7 +111,7 @@ The system includes an **interactive seat booking flow**, an **integrated meal b
 
 ---
 
-## 🔌 Backend API Overview
+## Backend API Overview
 
 ### Tech Stack
 - **Backend:** Python (FastAPI)
@@ -139,7 +139,7 @@ POST /predict_confirmation
 
 ---
 
-## 🤖 Booking Confirmation Prediction (AI/ML – Mock Logic)
+## Booking Confirmation Prediction (AI/ML – Mock Logic)
 
 ### Prediction Goal
 Estimate the probability (%) that a waitlisted booking will be confirmed.
@@ -171,17 +171,7 @@ Detailed explanation is available in **PREDICTION_APPROACH.md**.
 
 ---
 
-## 📁 Repository Structure
-
-.
-├── main.py
-├── prediction_engine.py
-├── README.md
-├── PREDICTION_APPROACH.md
-
----
-
-## ⚙️ System Assumptions
+## System Assumptions
 
 - Only one bus exists in the system.
 - No payment gateway integration.
@@ -191,7 +181,7 @@ Detailed explanation is available in **PREDICTION_APPROACH.md**.
 
 ---
 
-## ▶️ How to Run the Project
+##  How to Run the Project
 
 1. Install dependencies:
    pip install fastapi uvicorn
@@ -201,10 +191,3 @@ Detailed explanation is available in **PREDICTION_APPROACH.md**.
 
 3. Access API docs:
    http://127.0.0.1:8000/docs
-
----
-
-## 👤 Author
-
-AI/ML Software Engineer Candidate  
-Sleeper Bus Ticket Booking System Assignment

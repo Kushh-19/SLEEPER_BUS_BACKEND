@@ -4,7 +4,7 @@ from typing import List
 from datetime import datetime, date
 import uuid
 
-# IMPORT YOUR NEW PREDICTION ENGINE
+# IMPORT PREDICTION ENGINE
 from prediction_engine import ConfirmationPredictor 
 
 # --- CONSTANTS ---
@@ -86,8 +86,6 @@ def create_booking(booking: BookingRequest):
     start_node = STATIONS.get(booking.source)
     end_node = STATIONS.get(booking.destination)
     
-    # Validation Omitted for brevity (Keep your original validation here!)
-    
     # Calculate Price
     seat_price = sum(s["price"] for s in seats if s["id"] in booking.seat_ids)
     meal_price = booking.num_meals * MEAL_PRICE
@@ -104,7 +102,7 @@ def create_booking(booking: BookingRequest):
     bookings.append(new_booking)
     return new_booking
 
-# --- INTEGRATED PREDICTION ENDPOINT ---
+# --- PREDICTION ENDPOINT ---
 @app.post("/predict_confirmation")
 def predict_confirmation(request: PredictionRequest):
     """

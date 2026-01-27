@@ -6,8 +6,6 @@ class ConfirmationPredictor:
     """
     A mock implementation of a Logistic Regression classifier 
     for predicting Waitlist Clearance probabilities.
-    
-    Ref: Assignment Part 4 - Data Science & Prediction
     """
     
     def __init__(self):
@@ -36,13 +34,11 @@ class ConfirmationPredictor:
         # 1. Start with Base Probability
         score = self.weights["base_probability"]
         
-        # 2. Queue Position Impact (The most critical factor)
-        # WL #1 has high chance, WL #20 has low chance.
+        # 2. Queue Position Impact
         queue_penalty = waitlist_position * self.weights["penalty_per_waitlist_seat"]
         score -= queue_penalty
 
         # 3. Time Decay Factor
-        # More time = more chances for cancellations.
         if days_before_travel > 10:
             score += self.weights["bonus_long_lead_time"]
         elif days_before_travel < 2:
@@ -51,15 +47,11 @@ class ConfirmationPredictor:
             score -= self.weights["penalty_short_lead_time"]
             
         # 4. Route/Distance Factor
-        # We assume Station Mapping is standard: 1=Ahd, 4=Mum
-        # Simple logic: Calculate distance index manually or pass it in.
-        # Here we just check the string for simplicity of the mock model.
         is_long_route = (source == "Ahmedabad" and destination == "Mumbai")
         if is_long_route:
-            # Harder to get a seat on the busiest, longest route
             score -= self.weights["penalty_long_distance"]
 
-        # 5. Stochastic Noise (Simulation)
+        # 5. Noise (Simulation)
         # Adds ±5% variance to simulate real-world uncertainty
         variance = random.randint(-5, 5)
         score += variance
