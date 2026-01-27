@@ -129,7 +129,7 @@ GET /
 GET /seats
 
 #### Book Seats (with Meals)
-POST /book
+POST /book (Handles both Seat and Meal booking in a single transaction)
 
 #### Cancel Booking
 POST /cancel_booking

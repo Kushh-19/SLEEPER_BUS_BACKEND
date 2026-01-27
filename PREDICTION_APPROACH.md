@@ -18,34 +18,36 @@ This prediction helps users understand the likelihood of seat clearance on busy 
 
 ## Mock Historical Dataset
 
-A simulated dataset is included in the repository:
+A simulated dataset is included in the repository: `mock_booking_data.csv`
 
+This file represents **historical booking and waitlist behavior** and is used for feature selection and weight reasoning. Below is a sample of the data structure used:
 
-This file represents **historical booking and waitlist behavior** and is used for:
-- Feature selection
-- Weight reasoning
-- Model explanation
+| booking_id | waitlist_position | days_before_travel | route_category | outcome |
+|:-----------|:------------------|:-------------------|:---------------|:--------|
+| B001       | 2                 | 15                 | Long           | 1       |
+| B002       | 25                | 1                  | Long           | 0       |
+| B003       | 5                 | 10                 | Short          | 1       |
 
-> Note: The dataset is **not used at runtime** and exists purely for analytical and documentation purposes.
+> **Note:**
+> * `outcome`: **1** represents a Confirmed booking, **0** represents Cancelled/Not Cleared.
+> * `route_category`: A derived feature where "Long" represents Ahmedabad → Mumbai and "Short" represents intermediate stops.
+> * The dataset is **not used at runtime** and exists purely for analytical and documentation purposes.
 
 ---
 
 ## Dataset Structure
 
-The mock CSV contains records with the following fields (example):
+The mock CSV (`mock_booking_data.csv`) contains records with the following fields:
 
 | Column Name | Description |
 |------------|------------|
 | booking_id | Unique booking identifier |
-| source | Source station |
-| destination | Destination station |
-| travel_date | Date of journey |
-| days_before_travel | Days remaining before departure |
 | waitlist_position | Position in waitlist queue |
-| booking_status | Confirmed / Waitlisted / Cancelled |
-| route_type | Long route / Short route |
+| days_before_travel | Days remaining before departure |
+| route_category | Derived feature ('Long' for Abd-Mum, 'Short' for others) |
+| outcome | Target Variable (1 = Confirmed, 0 = Cancelled/Not Cleared) |
 
-This structure mirrors realistic booking system data.
+This structure represents a **pre-processed** dataset ready for model training, where raw station names have already been categorized into route types.
 
 ---
 
