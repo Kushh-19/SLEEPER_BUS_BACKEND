@@ -184,7 +184,7 @@ Detailed explanation is available in **PREDICTION_APPROACH.md**.
 ##  How to Run the Project
 
 1. Install dependencies:
-   pip install fastapi uvicorn
+   pip install -r requirements.txt
 
 2. Start the server:
    uvicorn main:app --reload
