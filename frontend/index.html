@@ -1,229 +1,304 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Sleeper Bus Booking</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <header class="app-header">
-    <div class="logo">
-      <span class="logo-mark">SB</span>
-      <span class="logo-text">Sleeper Bus Booking</span>
-    </div>
-    <div class="status-pill" id="api-status">Checking API...</div>
-  </header>
-
-  <main class="layout">
-    <nav class="sidebar">
-      <button class="nav-btn active" data-target="seats-section">1. Seats & Route</button>
-      <button class="nav-btn" data-target="booking-section">2. Create Booking</button>
-      <button class="nav-btn" data-target="bookings-section">3. View / Cancel Bookings</button>
-      <button class="nav-btn" data-target="prediction-section">4. Waitlist Prediction</button>
-    </nav>
-
-    <section class="content">
-      <!-- Seats / Route -->
-      <section id="seats-section" class="panel active">
-        <h2>Select Route & Seats</h2>
-        <p class="panel-subtitle">
-          Choose your source, destination, and travel date. Then pick available sleeper seats.
-        </p>
-
-        <form id="seats-form" class="form-grid">
-          <div class="field">
-            <label for="source">Source</label>
-            <select id="source" required></select>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+    />
+    <title>Sleeper Bus Booking</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="app-header">
+        <div class="brand">
+          <div class="brand-logo">SB</div>
+          <div>
+            <div class="brand-title">Sleeper Bus Booking</div>
+            <div class="brand-subtitle">Ahmedabad → Mumbai & stops</div>
           </div>
-
-          <div class="field">
-            <label for="destination">Destination</label>
-            <select id="destination" required></select>
-          </div>
-
-          <div class="field">
-            <label for="travel-date">Travel date</label>
-            <input type="date" id="travel-date" required />
-          </div>
-
-          <div class="actions">
-            <button type="submit" class="btn primary">Check available seats</button>
-          </div>
-        </form>
-
-        <div id="seats-results" class="seats-results hidden">
-          <h3>Available Seats</h3>
-          <div id="seats-list" class="seats-grid"></div>
-          <p id="seats-empty" class="empty-state hidden">No seats available for this route and date.</p>
         </div>
-      </section>
+        <div class="header-status">
+          <span id="api-status" class="status-pill">Connecting…</span>
+        </div>
+      </header>
 
-      <!-- Create Booking -->
-      <section id="booking-section" class="panel">
-        <h2>Create Booking</h2>
-        <p class="panel-subtitle">
-          Use selected seats from the previous step or type seat IDs manually (e.g. L1, U2).
-        </p>
+      <nav class="app-nav">
+        <button class="nav-btn active" data-target="panel-seats">
+          1. Seats & route
+        </button>
+        <button class="nav-btn" data-target="panel-book">
+          2. Book & meals
+        </button>
+        <button class="nav-btn" data-target="panel-bookings">
+          3. My bookings
+        </button>
+        <button class="nav-btn" data-target="panel-prediction">
+          4. Waitlist prediction (ML)
+        </button>
+      </nav>
 
-        <form id="booking-form" class="form-grid">
-          <div class="field">
-            <label for="booking-seat-ids">Seat IDs</label>
-            <input
-              type="text"
-              id="booking-seat-ids"
-              placeholder="e.g. L1, U2"
-              required
-            />
-            <small>Click seats in step 1 and they will appear here automatically.</small>
+      <main class="app-main">
+        <!-- Panel: Seats -->
+        <section id="panel-seats" class="panel active">
+          <div class="panel-header">
+            <h2>Search seats</h2>
+            <p>Select route & date, then tap seats to select.</p>
           </div>
 
-          <div class="field">
-            <label for="passenger-name">Passenger name</label>
-            <input type="text" id="passenger-name" required />
+          <form id="seats-form" class="card form-grid">
+            <div class="field">
+              <label for="source">From</label>
+              <select id="source" required></select>
+            </div>
+            <div class="field">
+              <label for="destination">To</label>
+              <select id="destination" required></select>
+            </div>
+            <div class="field">
+              <label for="travel-date">Travel date</label>
+              <input type="date" id="travel-date" required />
+            </div>
+            <div class="field align-end">
+              <button type="submit" class="btn-primary">Search seats</button>
+            </div>
+          </form>
+
+          <section id="seats-results" class="card seats-section hidden">
+            <header class="section-header">
+              <h3>Available seats</h3>
+              <p>
+                Tap to select; selected seats will auto-fill in the booking form.
+              </p>
+            </header>
+            <div id="seats-list" class="seats-grid"></div>
+            <div id="seats-empty" class="empty-state hidden">
+              No seats found for this route and date.
+            </div>
+          </section>
+        </section>
+
+        <!-- Panel: Booking -->
+        <section id="panel-book" class="panel">
+          <div class="panel-header">
+            <h2>Book seats & meals</h2>
+            <p>
+              Confirm your seats, add meals, and optionally mark as waitlisted.
+            </p>
           </div>
 
-          <div class="field">
-            <label for="age">Age</label>
-            <input type="number" id="age" min="1" max="120" required />
+          <form id="booking-form" class="card form-grid form-booking">
+            <div class="field full">
+              <label for="booking-seat-ids">Selected seats</label>
+              <input
+                type="text"
+                id="booking-seat-ids"
+                placeholder="e.g. L1, U2"
+                required
+              />
+              <small
+                >Tip: Use the Seats tab first, then come back here – seats will
+                auto-fill.</small
+              >
+            </div>
+
+            <div class="field">
+              <label for="passenger-name">Passenger name</label>
+              <input
+                type="text"
+                id="passenger-name"
+                placeholder="Full name"
+                required
+              />
+            </div>
+            <div class="field">
+              <label for="age">Age</label>
+              <input type="number" id="age" min="1" max="120" required />
+            </div>
+            <div class="field">
+              <label for="gender">Gender</label>
+              <select id="gender" required>
+                <option value="">Select</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="phone">Phone</label>
+              <input
+                type="tel"
+                id="phone"
+                placeholder="10–15 digits"
+                minlength="10"
+                maxlength="15"
+                required
+              />
+            </div>
+
+            <div class="field">
+              <label for="booking-source">From</label>
+              <select id="booking-source" required></select>
+            </div>
+            <div class="field">
+              <label for="booking-destination">To</label>
+              <select id="booking-destination" required></select>
+            </div>
+            <div class="field">
+              <label for="booking-date">Travel date</label>
+              <input type="date" id="booking-date" required />
+            </div>
+
+            <div class="field">
+              <label for="num-meals">Meals</label>
+              <input
+                type="number"
+                id="num-meals"
+                min="0"
+                step="1"
+                value="0"
+              />
+              <small>Meals are charged per passenger.</small>
+            </div>
+
+            <div class="field">
+              <label for="waitlist-position">Waitlist position (optional)</label>
+              <input
+                type="number"
+                id="waitlist-position"
+                min="0"
+                step="1"
+                placeholder="Leave blank for confirmed booking"
+              />
+              <small
+                >If filled, booking will be created as WAITLISTED and used for
+                ML predictions.</small
+              >
+            </div>
+
+            <div class="field align-end full">
+              <button type="submit" class="btn-primary">Create booking</button>
+            </div>
+          </form>
+
+          <div id="booking-result" class="card result hidden"></div>
+        </section>
+
+        <!-- Panel: Bookings -->
+        <section id="panel-bookings" class="panel">
+          <div class="panel-header">
+            <h2>My bookings</h2>
+            <p>Filter by date or status, then tap a card to pre-fill cancel.</p>
           </div>
 
-          <div class="field">
-            <label for="gender">Gender</label>
-            <select id="gender" required>
-              <option value="">Select</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-            </select>
+          <form id="filter-bookings-form" class="card form-grid">
+            <div class="field">
+              <label for="filter-date">Travel date</label>
+              <input type="date" id="filter-date" />
+            </div>
+            <div class="field">
+              <label for="filter-status">Status</label>
+              <select id="filter-status">
+                <option value="">Any</option>
+                <option value="CONFIRMED">Confirmed</option>
+                <option value="WAITLISTED">Waitlisted</option>
+                <option value="CANCELLED">Cancelled</option>
+              </select>
+            </div>
+            <div class="field align-end">
+              <button type="submit" class="btn-secondary">
+                Refresh bookings
+              </button>
+            </div>
+          </form>
+
+          <section class="card">
+            <header class="section-header">
+              <h3>Recent bookings</h3>
+            </header>
+            <div id="bookings-list" class="bookings-list"></div>
+            <div id="bookings-empty" class="empty-state hidden">
+              No bookings yet. Create one from the “Book & meals” tab.
+            </div>
+          </section>
+
+          <section class="card">
+            <header class="section-header">
+              <h3>Cancel booking</h3>
+              <p>Paste a booking ID or tap a card above to auto-fill.</p>
+            </header>
+            <form id="cancel-form" class="form-inline">
+              <input
+                type="text"
+                id="cancel-booking-id"
+                placeholder="Booking ID"
+                required
+              />
+              <button type="submit" class="btn-danger">
+                Cancel booking
+              </button>
+            </form>
+            <div id="cancel-result" class="result hidden"></div>
+          </section>
+        </section>
+
+        <!-- Panel: Prediction -->
+        <section id="panel-prediction" class="panel">
+          <div class="panel-header">
+            <h2>Waitlist confirmation prediction (ML)</h2>
+            <p>
+              Estimate the chance a waitlisted ticket will clear before travel.
+            </p>
           </div>
 
-          <div class="field">
-            <label for="phone">Phone</label>
-            <input type="tel" id="phone" minlength="10" maxlength="15" required />
-          </div>
+          <form id="prediction-form" class="card form-grid">
+            <div class="field">
+              <label for="prediction-source">From</label>
+              <select id="prediction-source" required></select>
+            </div>
+            <div class="field">
+              <label for="prediction-destination">To</label>
+              <select id="prediction-destination" required></select>
+            </div>
+            <div class="field">
+              <label for="days-before-travel">Days before travel</label>
+              <input
+                type="number"
+                id="days-before-travel"
+                min="0"
+                step="1"
+                required
+              />
+            </div>
+            <div class="field">
+              <label for="prediction-waitlist-position">Waitlist position</label>
+              <input
+                type="number"
+                id="prediction-waitlist-position"
+                min="0"
+                step="1"
+                required
+              />
+            </div>
+            <div class="field align-end full">
+              <button type="submit" class="btn-primary">
+                Predict confirmation chance
+              </button>
+            </div>
+          </form>
 
-          <div class="field">
-            <label for="booking-source">Source</label>
-            <select id="booking-source" required></select>
-          </div>
+          <div id="prediction-result" class="card result hidden"></div>
+        </section>
+      </main>
 
-          <div class="field">
-            <label for="booking-destination">Destination</label>
-            <select id="booking-destination" required></select>
-          </div>
+      <footer class="app-footer">
+        <span id="footer-meta"></span>
+        <span class="footer-right">Sleeper Bus Booking · FastAPI + HTML/CSS/JS</span>
+      </footer>
+    </div>
 
-          <div class="field">
-            <label for="booking-date">Travel date</label>
-            <input type="date" id="booking-date" required />
-          </div>
-
-          <div class="field">
-            <label for="num-meals">Meals</label>
-            <input type="number" id="num-meals" min="0" value="0" />
-          </div>
-
-          <div class="field">
-            <label for="waitlist-position">Waitlist position (optional)</label>
-            <input type="number" id="waitlist-position" min="0" />
-          </div>
-
-          <div class="actions">
-            <button type="submit" class="btn primary">Create booking</button>
-          </div>
-        </form>
-
-        <div id="booking-result" class="result-box hidden"></div>
-      </section>
-
-      <!-- List / Cancel Bookings -->
-      <section id="bookings-section" class="panel">
-        <h2>Bookings</h2>
-
-        <form id="filter-bookings-form" class="form-grid compact">
-          <div class="field">
-            <label for="filter-date">Travel date (optional)</label>
-            <input type="date" id="filter-date" />
-          </div>
-          <div class="field">
-            <label for="filter-status">Status (optional)</label>
-            <select id="filter-status">
-              <option value="">Any</option>
-              <option value="CONFIRMED">CONFIRMED</option>
-              <option value="CANCELLED">CANCELLED</option>
-              <option value="WAITLISTED">WAITLISTED</option>
-            </select>
-          </div>
-          <div class="actions">
-            <button type="submit" class="btn">Refresh list</button>
-          </div>
-        </form>
-
-        <div id="bookings-list" class="list"></div>
-        <p id="bookings-empty" class="empty-state hidden">No bookings found.</p>
-
-        <div class="divider"></div>
-
-        <h3>Cancel booking</h3>
-        <form id="cancel-form" class="form-inline">
-          <div class="field grow">
-            <label for="cancel-booking-id">Booking ID</label>
-            <input
-              type="text"
-              id="cancel-booking-id"
-              placeholder="e.g. BUS-20250309-001"
-              required
-            />
-          </div>
-          <button type="submit" class="btn danger">Cancel booking</button>
-        </form>
-        <div id="cancel-result" class="result-box hidden"></div>
-      </section>
-
-      <!-- Prediction -->
-      <section id="prediction-section" class="panel">
-        <h2>Waitlist Confirmation Prediction</h2>
-        <p class="panel-subtitle">
-          Estimate the chance that a waitlisted ticket will be confirmed before travel.
-        </p>
-
-        <form id="prediction-form" class="form-grid">
-          <div class="field">
-            <label for="prediction-source">Source</label>
-            <select id="prediction-source" required></select>
-          </div>
-
-          <div class="field">
-            <label for="prediction-destination">Destination</label>
-            <select id="prediction-destination" required></select>
-          </div>
-
-          <div class="field">
-            <label for="days-before-travel">Days before travel</label>
-            <input type="number" id="days-before-travel" min="0" required />
-          </div>
-
-          <div class="field">
-            <label for="prediction-waitlist-position">Waitlist position</label>
-            <input type="number" id="prediction-waitlist-position" min="0" required />
-          </div>
-
-          <div class="actions">
-            <button type="submit" class="btn primary">Predict</button>
-          </div>
-        </form>
-
-        <div id="prediction-result" class="result-box hidden"></div>
-      </section>
-    </section>
-  </main>
-
-  <footer class="app-footer">
-    <span>Backend: FastAPI &middot; Frontend: HTML + CSS + JS</span>
-    <span id="footer-meta"></span>
-  </footer>
-
-  <script src="script.js"></script>
-</body>
+    <script src="script.js"></script>
+  </body>
 </html>
 

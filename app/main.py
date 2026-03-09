@@ -2,6 +2,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.db.database import engine
 from app.db.models import Base
@@ -30,6 +31,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Serve the HTML/CSS/JS frontend from /frontend
+app.mount(
+    "/frontend",
+    StaticFiles(directory="frontend", html=True),
+    name="frontend",
+)
+
 app.include_router(booking.router)
 app.include_router(seats.router)
 app.include_router(prediction.router)
@@ -41,6 +49,7 @@ def root():
         "status": "active",
         "service": "Sleeper Bus Booking API",
         "docs": "/docs",
+        "frontend": "/frontend",
         "stations": list(STATIONS.keys()),
         "pricing": {"meal_price": MEAL_PRICE},
     }
