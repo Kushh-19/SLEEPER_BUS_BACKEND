@@ -1,3 +1,8 @@
 fastapi
-uvicorn
+uvicorn[standard]
+sqlalchemy
 pydantic
+scikit-learn
+pandas
+joblib
+pytest

@@ -115,79 +115,81 @@ The system includes an **interactive seat booking flow**, an **integrated meal b
 
 ### Tech Stack
 - **Backend:** Python (FastAPI)
-- **Data Validation:** Pydantic
-- **Prediction Logic:** Custom heuristic-based engine (mock AI model)
+- **Database:** SQLite + SQLAlchemy ORM
+- **Validation:** Pydantic
+- **ML:** scikit-learn (Logistic Regression) for waitlist confirmation prediction
 
----
+### Project Structure
+```
+app/
+  core/       # Config (stations, seats, meal price)
+  db/         # Database engine, models, get_db
+  routers/    # booking, seats, prediction
+  schemas/    # Pydantic request/response models
+  services/   # booking_service, seat_service, pricing_service
+  prediction/ # ML model (train.py, predictor.py), data/, model.pkl
+```
 
 ### API Endpoints
 
-#### Health Check
-GET /
-
-#### List Seats
-GET /seats
-
-#### Book Seats (with Meals)
-POST /book (Handles both Seat and Meal booking in a single transaction)
-
-#### Cancel Booking
-POST /cancel_booking
-
-#### Predict Booking Confirmation
-POST /predict_confirmation
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/` | Service info and stations |
+| GET | `/health` | Health check |
+| GET | `/seats/` | Available seats (query: source, destination, travel_date) |
+| POST | `/bookings/` | Create booking (body: seat_ids, passenger details, source, destination, travel_date, num_meals, optional waitlist_position) |
+| POST | `/bookings/cancel` | Cancel booking (body: booking_id) |
+| GET | `/bookings` | List bookings (optional: travel_date, status, limit) |
+| GET | `/bookings/{booking_id}` | Get one booking |
+| POST | `/prediction/waitlist-confirmation` | ML prediction for waitlist confirmation % (body: source, destination, days_before_travel, waitlist_position) |
 
 ---
 
-## Booking Confirmation Prediction (AI/ML – Mock Logic)
+## Waitlist Confirmation Prediction (ML)
 
-### Prediction Goal
-Estimate the probability (%) that a waitlisted booking will be confirmed.
+### Goal
+Estimate the **probability (%)** that a waitlisted ticket will be confirmed before travel.
 
----
-
-### Prediction Approach
-- Rule-based heuristic inspired by Logistic Regression.
-- Combines queue position, time to departure, and route demand.
-- Adds controlled randomness to simulate real-world uncertainty.
-
----
-
-### Mock Dataset
-- Simulated historical dataset (~5000 records).
-- Features:
-  - Waitlist position
-  - Days before travel
-  - Route type
-
----
+### Implementation
+- **Model:** Logistic Regression (scikit-learn) trained on historical clearance data.
+- **Features:** `waitlist_position`, `days_before_travel`, `route_category` (Long = Ahmedabad–Mumbai, Short = other segments).
+- **Training data:** `app/prediction/data/mock_booking_data.csv` (150 records). Retrain with:
+  ```bash
+  python -m app.prediction.train
+  ```
+- **Fallback:** If `model.pkl` is missing, a rule-based heuristic is used.
 
 ### Output
-- Confirmation probability (0–99%)
-- Confidence level
-- Key influencing drivers
+- `confirmation_probability` (e.g. "72%")
+- `probability_value` (0–100)
+- `confidence_score` (High/Medium)
+- `details.drivers`: queue_impact, time_impact, route_category
 
-Detailed explanation is available in **PREDICTION_APPROACH.md**.
+See **PREDICTION_APPROACH.md** for more detail.
 
 ---
 
 ## System Assumptions
 
-- Only one bus exists in the system.
-- No payment gateway integration.
-- No user authentication.
-- Static station list.
-- Prediction model is mocked and not trained.
+- Single bus; static station list (Ahmedabad, Vadodara, Surat, Mumbai).
+- No payment gateway or user authentication.
+- SQLite DB file: `./sleeper_bus.db`.
 
 ---
 
-##  How to Run the Project
+## How to Run
 
 1. Install dependencies:
+   ```bash
    pip install -r requirements.txt
-
-2. Start the server:
-   uvicorn main:app --reload
-
-3. Access API docs:
-   http://127.0.0.1:8000/docs
+   ```
+2. (Optional) Train the waitlist prediction model:
+   ```bash
+   python -m app.prediction.train
+   ```
+3. Start the server:
+   ```bash
+   uvicorn app.main:app --reload
+   ```
+4. API docs: **http://127.0.0.1:8000/docs**
+5. Run tests: `pytest tests/ -v`
